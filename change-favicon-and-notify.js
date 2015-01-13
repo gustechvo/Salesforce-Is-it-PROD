@@ -22,14 +22,14 @@
 			//console.log('Developer Edition');
     	} else {
     		//This should be a production org.
-    		link.href = 'https://s3.amazonaws.com/gustechvodevassets/productionfavicon.ico';
+    		link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/productionfavicon.ico';
     		$.notify("PRODUCTION ORG",{position:"top center",className : "error", autoHide: false});
     		//console.log('Production Org');
     	}
 
 	} else if(document.URL.indexOf("https://cs")>-1){
 		//This is a sandbox 
-		link.href = 'https://s3.amazonaws.com/gustechvodevassets/devfavicon.ico';
+		link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/devfavicon.ico';
 		$.notify("SANDBOX ORG",{position:"top center",className: "info", autoHide: false});
 		//console.log('Sandbox Org');
 	}
