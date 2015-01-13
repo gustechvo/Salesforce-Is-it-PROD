@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "SFDC - Is it PROD?",
+  "version": "1",
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "permissions": [
+  "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.salesforce.com/*"],
+      "exclude_matches": ["https://www.salesforce.com/*", "https://login.salesforce.com/*", "https://test.salesforce.com/*"],
+      
+      "js": ["jquery-1.11.2.min.js", "notify-custom.js",  "change-favicon-and-notify.js"],
+       "run_at": "document_end"
+    }
+  ],
+  
+  "minimum_chrome_version": "28"
+}
