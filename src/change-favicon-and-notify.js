@@ -1,8 +1,9 @@
 // Is it PROD? Google Chrome Extension
-// Changes the favicon according to the server/andor title of the page
+// Changes the favicon according to the ORG Data received via Salesforce REST API
 // RED FAVICON = PRODUCTION ORG
-// GREEN FAVICON = SANDBOX or DEVELOPER ORG
-// Notifications can be click on to dismiss.
+// TEAL FAVICON = SANDBOX ORG
+// GREEN FAVICON = DEVELOPER ORG
+// Notifications can be clicked on to dismiss.
 // Created by @gustechvo, comments and feedback welcome! 
 
 
@@ -37,7 +38,7 @@ if(salesforce_sid != null || salesforce_sid != ''){
     }
 }
 
-//Performs 
+//Performs the org identification, favicon change, and notification
 function favicon_notify(data){
 
     //Create a link tag for us to insert a new favicon
@@ -54,7 +55,7 @@ function favicon_notify(data){
     //Get Org Type
     var org_type = data['records'][0]['OrganizationType'];
 
-    //If the URL starts with NA then it is production or developer edition
+    //There are 3 options: Developer, Sandbox, Production Orgs
     if(org_type == "Developer Edition"){
 
         //Set favicon link to green favicon
@@ -66,12 +67,12 @@ function favicon_notify(data){
     
     } else if(Boolean(is_sandbox)){
 
-        //Set favicon link to green favicon
+        //Set favicon link to teal favicon
         link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/sandboxfavicon.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
         
-        //Generate sticky notification with Org Name and Developer designation
-        $.notify(org_name + "\n SANDBOX ORG",{position:"top center",className: "warn", autoHide: false});
+        //Generate sticky notification with Org Name and Sandbox designation
+        $.notify(org_name + "\n SANDBOX ORG",{position:"top center",className: "info", autoHide: false});
 
     } else {
 
@@ -80,7 +81,7 @@ function favicon_notify(data){
         link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/productionfavicon.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
 
-        //Generate sticky notification with Org Name and Developer designation
+        //Generate sticky notification with Org Name and Production designation
         $.notify(org_name + "\n PRODUCTION ORG",{position:"top center",className : "error", autoHide: false});
         
     }
