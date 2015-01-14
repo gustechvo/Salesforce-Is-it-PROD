@@ -5,63 +5,86 @@
 // Notifications can be click on to dismiss.
 // Created by @gustechvo, comments and feedback welcome! 
 
-//Create a link tag for us to insert a new favicon
-var link = document.createElement('link');
-link.type = 'image/x-icon';
-link.rel = 'shortcut icon';
-//Get the title of the page we are on to determine if it is a Developer Edition org.
-var title = document.title;
-
-//If the URL starts with NA then it is production or developer edition
-if(document.URL.indexOf("https://na")>-1){
-	//If the title of the page contains Developer Edition
-	if(title.indexOf("Developer Edition")>-1){
-		link.href = 'https://s3.amazonaws.com/gustechvodevassets/devfavicon.ico';
-		$.notify("DEVELOPER ORG",{position:"top center",className: "success", autoHide: false});
-		//console.log('Developer Edition');
-	} else {
-		//This should be a production org.
-		link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/productionfavicon.ico';
-		$.notify("PRODUCTION ORG",{position:"top center",className : "error", autoHide: false});
-		//console.log('Production Org');
-	}
-
-} else if(document.URL.indexOf("https://cs")>-1){
-	//This is a sandbox 
-	link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/devfavicon.ico';
-	$.notify("SANDBOX ORG",{position:"top center",className: "info", autoHide: false});
-	//console.log('Sandbox Org');
-}
-//Change the Favicon accordingly.
-document.getElementsByTagName('head')[0].appendChild(link);
 
 //Get the current Session ID from SID Cookie
 var salesforce_sid = $.cookie('sid');
 
-//The name of the org
-var org_name = null;
-var is_sandbox = null
-var org_data = null;
+if(salesforce_sid != null || salesforce_sid != ''){
+    //Get current page URL
+    var org_url = document.URL;
 
-$.ajax({
-        url: "https://na17.salesforce.com/services/data/v32.0/query/?q=SELECT+InstanceName,+IsSandbox,+OrganizationType,+Name+FROM+Organization",
-        type: 'GET',
-        dataType: 'json',
-        beforeSend: setHeader
-    })           
-    .done(function (data) {
-      console.log(data);
-      org_data = data;
-      console.log(data['records'][0]['Name']);
+    //Get the current Salesforce Instace (ex: NA12 or CS11)
+    var salesforce_instance = org_url.substring(org_url.lastIndexOf("https://")+8,org_url.lastIndexOf(".salesforce.com"));
 
+    //Perform call to Salesforce REST API using the Salesforce SID from cookie
+    $.ajax({
+            url: "https://" + salesforce_instance + ".salesforce.com/services/data/v32.0/query/?q=SELECT+InstanceName,+IsSandbox,+OrganizationType,+Name+FROM+Organization",
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: setHeader
+        })           
+        .done(function (org_data) {
+          
+          favicon_notify(org_data);
 
-    })
-    .fail(function (jqXHR, textStatus) {
-      alert("error: " + textStatus);
-    });
+        })
+        .fail(function (jqXHR, textStatus) {
+          console.log('No session ID found');
+        });
+    //Need to set Authorization Bearer Token with the SID from session cookie
+    function setHeader(xhr){
+        xhr.setRequestHeader('Authorization', 'Bearer ' + salesforce_sid);
+    }
+}
 
-function setHeader(xhr){
-    xhr.setRequestHeader('Authorization', 'Bearer ' + salesforce_sid);
+//Performs 
+function favicon_notify(data){
+
+    //Create a link tag for us to insert a new favicon
+    var link = document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+
+    //Get the name of the org
+    var org_name = data['records'][0]['Name'];
+
+    //Get Sandbox Flag
+    var is_sandbox = data['records'][0]['IsSandbox'];
+
+    //Get Org Type
+    var org_type = data['records'][0]['OrganizationType'];
+
+    //If the URL starts with NA then it is production or developer edition
+    if(org_type == "Developer Edition"){
+
+        //Set favicon link to green favicon
+        link.href = 'https://s3.amazonaws.com/gustechvodevassets/devfavicon.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
+        
+        //Generate sticky notification with Org Name and Developer designation
+        $.notify(org_name + "\n DEVELOPER ORG",{position:"top center",className: "success", autoHide: false, style: 'bootstrap'});
+    
+    } else if(Boolean(is_sandbox)){
+
+        //Set favicon link to green favicon
+        link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/sandboxfavicon.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
+        
+        //Generate sticky notification with Org Name and Developer designation
+        $.notify(org_name + "\n SANDBOX ORG",{position:"top center",className: "warn", autoHide: false});
+
+    } else {
+
+        //This should be a production org.
+        //Set favicon link to green favicon
+        link.href = 'https://s3.amazonaws.com/gustechvodevassets/Salesforce-Is-it-PROD-Chrome-Extension/productionfavicon.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
+
+        //Generate sticky notification with Org Name and Developer designation
+        $.notify(org_name + "\n PRODUCTION ORG",{position:"top center",className : "error", autoHide: false});
+        
+    }
+
 }
 
 
