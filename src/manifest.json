@@ -6,14 +6,14 @@
     "128": "icon_128.png"
   },
   "permissions": [
-  "tabs"
+  "tabs", "cookies", "*://*.salesforce.com/"
   ],
   "content_scripts": [
     {
       "matches": ["https://*.salesforce.com/*"],
       "exclude_matches": ["https://www.salesforce.com/*", "https://login.salesforce.com/*", "https://test.salesforce.com/*"],
       
-      "js": ["jquery-1.11.2.min.js", "notify-custom.js",  "change-favicon-and-notify.js"],
+      "js": ["jquery-1.11.2.min.js", "notify-custom.js", "jquery.cookie.js", "change-favicon-and-notify.js"],
        "run_at": "document_end"
     }
   ],
