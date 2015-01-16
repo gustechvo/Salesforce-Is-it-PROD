@@ -9,7 +9,7 @@
 
 //Get the current Session ID from SID Cookie
 var salesforce_sid = $.cookie('sid');
-//var salesforce_sid_Client = $.cookie('sid_Client');
+var salesforce_sid_Client = $.cookie('sid_Client');
 
 //Get the name of the org from existing cookie, otherwise null
 var org_name = $.cookie('IsitProd_org_name');
@@ -21,9 +21,11 @@ var is_sandbox = $.cookie('IsitProd_is_sandbox');
 var org_type = $.cookie('IsitProd_org_type');
 
 
-if(org_name == null || is_sandbox == null || org_type == null){
 
-    if(salesforce_sid != null || salesforce_sid != ''){
+//if(org_name == null || is_sandbox == null || org_type == null){
+if(salesforce_sid_Client !== $.cookie('salesforce_sid_Client')){
+
+    if(salesforce_sid != null || salesforce_sid != '' ){
         console.log('Getting New Data for Org');
         //Get current page URL
         var org_url = document.URL;
@@ -50,6 +52,9 @@ if(org_name == null || is_sandbox == null || org_type == null){
                 //Get Org Type
                 var org_type = org_data['records'][0]['OrganizationType'];
                 $.cookie('IsitProd_org_type',org_type, {path: '/'});
+
+                var salesforce_sid_Client = $.cookie('sid_Client');
+                $.cookie('salesforce_sid_Client', salesforce_sid_Client, {path:'/'});
 
                 favicon_notify(org_name, is_sandbox, org_type);
 
@@ -110,9 +115,6 @@ function favicon_notify(org_name, is_sandbox, org_type){
     }
 
 }
-
-
-
 
 
 

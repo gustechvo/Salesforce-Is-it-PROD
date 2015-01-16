@@ -13,10 +13,11 @@
       "matches": ["https://*.salesforce.com/*"],
       "exclude_matches": ["https://www.salesforce.com/*", "https://login.salesforce.com/*", "https://test.salesforce.com/*"],
       
-      "js": ["jquery-1.11.2.min.js", "notify-custom.js", "jquery.cookie.js", "change-favicon-and-notify.js"],
-       "run_at": "document_end"
+      "js": ["jquery-1.11.2.min.js", "notify-custom.js", "jquery.cookie.js",  "change-favicon-and-notify.js"],
+      "run_at": "document_end"
     }
   ],
+  
   
   "minimum_chrome_version": "28"
 }
